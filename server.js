@@ -1,80 +1,56 @@
 const inquirer = require("inquirer");
 const cTable = require("console.table");
-const sql = require('./db/query_lib');
-const cHelper = require('./lib/choiceHelper');
+const sql = require("./db/query_lib");
+const cHelper = require("./lib/choiceHelper");
 
-const db = require('./db/connection');
+const db = require("./db/connection");
 
-onst chooseRequest = () => {
-    inquirer.prompt([
-        {
-          type: 'list',
-          name: 'request',
-          message: 'What would you like to do?',
-          choices: ['Add a Department', 
-                    'Add an Employee', 
-                    'Add a Role',
-                    'Delete an Employee', // Bonus
-                    'Update Employees Role',
-                    'Update Employees Manager', // Bonus 
-                    'View All Departments', 
-                    'View All Employees', 
-                    'View All Roles', 
-                    'View Department Budget', // Bonus
-                    'View Employees by Department', // Bonus
-                    'View Employees by Manager' // Bonus
-                   ],
-          loop: false,
-        },
+const mainMenu = () => {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "request",
+        message: "What would you like to do?",
+        choices: [
+          "Add a Department",
+          "Add an Employee",
+          "Add a Role",
+          "Update Employees Role",
+          "View All Departments",
+          "View All Employees",
+          "View All Roles",
+        ],
+        loop: false,
+      },
     ])
-  
+
     .then((data) => {
-        const {request} = data;
-        console.log(request);
+      const { request } = data;
+      console.log(request);
       //   Switch case
       switch (request) {
-          case 'Add a Department':
-            newDept();
+        case "View All Departments":
+            allDepts();
             break;
-          case 'Add a Role':
-            newRole();
+          case "View All Employees":
+            allEmps();
             break;
-          case 'Add an Employee':
-            newEmp();
+          case "View All Roles":
+            allRoles();
             break;
-          case 'Delete an Employee':
-            delEmp();
-            break;
-          case 'Update Employees Role':
-            updateEmpRole();
-            break;
-          case 'Update Employees Manager':
-            updateEmpManager();
-            break;
-          case 'View All Departments':
-            viewDepts();
-            break;
-          case 'View All Employees':
-            viewEmps();
-            break;
-          case 'View All Roles':
-            viewRoles();
-            break;         
-          case 'View Department Budget':
-            viewBudgets();
-            break;
-          case 'View Employees by Department':
-            viewEmpByDept();
-            break;
-          case 'View Employees by Manager':
-            viewEmpByMgr();
-            break;                
-      
-          default:
-              break;
+        case "Add a Department":
+          addDept();
+          break;
+        case "Add a Role":
+          addRole();
+          break;
+        case "Add an Employee":
+          addEmp();
+          break;
+        
       }
-    })
-  }
-  
-  chooseRequest();
-  
+    });
+};
+
+mainMenu();
