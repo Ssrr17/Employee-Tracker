@@ -1,4 +1,5 @@
 const inquirer = require("inquirer");
+const { listenerCount } = require("./db/connection");
 require("console.table");
 const queries = require("./lib/queries");
 
@@ -93,12 +94,51 @@ function addDept() {
       },
     ])
     .then((result) => {
-      queries.addDept(result).then(() => {
-        console.log(`Department ${result.name} has been successfully added!`);
-      })
-      .then(() => {
-        mainMenu();
+      queries
+        .addDept(result)
+        .then(() => {
+          console.log(`Department ${result.name} has been successfully added!`);
+        })
+        .then(() => {
+          mainMenu();
+        });
+    });
+}
+function addRole() {
+  let deptChoices;
+  queries.allDept().then(([rows]) => {
+    deptChoices = rows.map((row) => {
+      return { name: row.name, value: row.id };
+    });
+
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "Enter role title",
+          name: "title",
+        },
+        {
+          type: "input",
+          message: "Enter role salary",
+          name: "salary",
+        },
+        {
+          type: "list",
+          name: "department_id",
+          message: "Choose a department to add role",
+          choices: deptChoices,
+        },
+      ])
+      .then((result) => {
+        queries
+          .addRole(result)
+          .then(() => {
+            console.log(`Role ${result.title} has been successfully added!`);
+          })
+          .then(() => {
+            mainMenu();
+          });
       });
-    })
-    
+  });
 }
