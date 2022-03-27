@@ -1,9 +1,6 @@
 const inquirer = require("inquirer");
-const cTable = require("console.table");
-const sql = require("./db/query_lib");
-const cHelper = require("./lib/choiceHelper");
-
-const db = require("./db/connection");
+require("console.table");
+const queries = require("./lib/queries");
 
 const mainMenu = () => {
   inquirer
@@ -31,14 +28,14 @@ const mainMenu = () => {
       //   Switch case
       switch (request) {
         case "View All Departments":
-            allDepts();
-            break;
-          case "View All Employees":
-            allEmps();
-            break;
-          case "View All Roles":
-            allRoles();
-            break;
+          allDept();
+          break;
+        case "View All Employees":
+          allEmps();
+          break;
+        case "View All Roles":
+          allRoles();
+          break;
         case "Add a Department":
           addDept();
           break;
@@ -48,9 +45,60 @@ const mainMenu = () => {
         case "Add an Employee":
           addEmp();
           break;
-        
       }
     });
 };
 
 mainMenu();
+
+function allDept() {
+  queries
+    .allDept()
+    .then(([rows]) => {
+      console.table(rows);
+    })
+    .then(() => {
+      mainMenu();
+    });
+}
+
+function allEmps() {
+  queries
+    .allEmps()
+    .then(([rows]) => {
+      console.table(rows);
+    })
+    .then(() => {
+      mainMenu();
+    });
+}
+
+function allRoles() {
+  queries
+    .allRoles()
+    .then(([rows]) => {
+      console.table(rows);
+    })
+    .then(() => {
+      mainMenu();
+    });
+}
+function addDept() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "Enter department name",
+        name: "name",
+      },
+    ])
+    .then((result) => {
+      queries.addDept(result).then(() => {
+        console.log(`Department ${result.name} has been successfully added!`);
+      })
+      .then(() => {
+        mainMenu();
+      });
+    })
+    
+}
