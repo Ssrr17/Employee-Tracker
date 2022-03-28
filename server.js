@@ -142,3 +142,42 @@ function addRole() {
       });
   });
 }
+
+function addEmp(){
+    let empChoices;
+    queries.allRoles().then(([rows]) => {
+      empChoices = rows.map((row) => {
+        return { name: row.name, value: row.id };
+      })
+      inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "Enter employee first name",
+          name: "first_name",
+        },
+        {
+          type: "input",
+          message: "Enter employee last name",
+          name: "last_name",
+        },
+        {
+            type: "list",
+            name: "role_id",
+            message: "Choose a role for new employee",
+            choices: empChoices,
+          }
+    ])
+    .then((result) => {
+        queries
+          .addEmp(result)
+          .then(() => {
+            console.log(`${result.first_name} ${result.last_name} has been successfully added as a new employee!`);
+          })
+          .then(() => {
+            mainMenu();
+          });
+      });
+    })
+}
+
