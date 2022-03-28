@@ -46,6 +46,9 @@ const mainMenu = () => {
         case "Add an Employee":
           addEmp();
           break;
+        case "Update Employees Role":
+          updateEmp();
+          break;
       }
     });
 };
@@ -143,13 +146,13 @@ function addRole() {
   });
 }
 
-function addEmp(){
-    let empChoices;
-    queries.allRoles().then(([rows]) => {
-      empChoices = rows.map((row) => {
-        return { name: row.name, value: row.id };
-      })
-      inquirer
+function addEmp() {
+  let empChoices;
+  queries.allRoles().then(([rows]) => {
+    empChoices = rows.map((row) => {
+      return { name: row.name, value: row.id };
+    });
+    inquirer
       .prompt([
         {
           type: "input",
@@ -162,22 +165,65 @@ function addEmp(){
           name: "last_name",
         },
         {
-            type: "list",
-            name: "role_id",
-            message: "Choose a role for new employee",
-            choices: empChoices,
-          }
-    ])
-    .then((result) => {
+          type: "list",
+          name: "role_id",
+          message: "Choose a role for new employee",
+          choices: empChoices,
+        },
+      ])
+      .then((result) => {
         queries
           .addEmp(result)
           .then(() => {
-            console.log(`${result.first_name} ${result.last_name} has been successfully added as a new employee!`);
+            console.log(
+              `${result.first_name} ${result.last_name} has been successfully added as a new employee!`
+            );
           })
           .then(() => {
             mainMenu();
           });
       });
-    })
+  });
 }
 
+function updateEmp() {
+  let empChoices;
+  queries.allEmps().then(([rows]) => {
+    empChoices = rows.map((row) => {
+      return { name: row.name, value: row.id };
+    });
+    let roleChoices;
+    queries.allRoles().then(([rows]) => {
+      roleChoices = rows.map((row) => {
+        return { name: row.name, value: row.id };
+      });
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "employee_id",
+            message: "Choose a employee to update",
+            choices: empChoices,
+          },
+          {
+            type: "list",
+            name: "role_id",
+            message: "Choose a new role for employee",
+            choices: roleChoices,
+          },
+        ])
+        .then((result) => {
+          queries
+            .updateEmp(result)
+            .then(() => {
+              console.log(
+                `${result.employee_id} has been successfully updated!`
+              );
+            })
+            .then(() => {
+              mainMenu();
+            });
+        });
+    });
+  });
+}
